@@ -1,0 +1,1126 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package projectJV;
+
+
+
+import static com.sun.xml.internal.fastinfoset.alphabet.BuiltInRestrictedAlphabets.table;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.EventObject;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.UIManager;
+import javax.swing.event.CellEditorListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+
+
+
+
+/**
+ *
+ * @author 17jz0127
+ */
+public class BoundaryOrder extends javax.swing.JFrame {
+    DefaultTableModel  orderViewTableModel; // デフォルトテーブル
+    ControlOrder  control;                  // コントローラクラス
+    int rowSelect;                          // テーブルのチェックボックスのついている個数
+    int fixationCount;                      // 現在の顧客のサービス可能回数(注文前)
+    
+    
+    /**
+     * コンストラクタ
+     */
+    public BoundaryOrder() {
+        initComponents();
+        setTitle("注文画面");
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        initTableModel();
+        rowSelect = 0;
+        jButtonServiceAdd.setVisible(false);
+    }
+    
+    /**
+     * テーブルモデルの初期化と表の連携
+     */
+    private void initTableModel() {
+        String[] hedding = {"商品番号", "商品名", "単価", "個数", "小合計", "取消"};
+        orderViewTableModel = new MyTableModel(hedding, 0);
+        jTableOrder.setModel(orderViewTableModel);
+        changeColumn(0, 10);
+        changeColumn(1, 250);
+        changeColumn(2, 35);
+        changeColumn(3, 10);
+        changeColumn(4, 55);
+        changeColumn(5, 15);
+    }
+    /**
+     * 商品テーブルにアイテムを追加する
+     * @param rowData Object配列[商品番号, 商品名, 価格, 個数, 小計, 取り消しの有無]
+     */
+    public void addOrderViewTable(Object[] rowData) {
+ 
+        orderViewTableModel.addRow(rowData);
+        jTableOrder.getColumn("取消").setCellRenderer(new JTableButtonRenderer());
+        jTableOrder.addMouseListener(new JTableButtonMouseListener(jTableOrder));
+        
+        
+        
+    }
+    
+    public void setControl(ControlOrder control) {
+        this.control = control;
+    }
+    
+    public void changeColumn(int index, int width) {
+        jTableOrder.getColumnModel().getColumn(index).setMinWidth(width);
+    }
+    /**
+     * コンボボックスに商品番号 : 商品名を追加する
+     */
+    public void setItems() {
+        jComboBoxItem.removeAllItems();
+        List<Item> itemList = control.searchItem();
+        for(Item item : itemList) {
+            jComboBoxItem.addItem(item.getItemNo() + "  " + item.getItemName());
+        }
+    }
+    /**
+     * 配達日時に現在時刻を入れ、コンボボックスに候補時間を追加する
+     */
+    public void setDate() {
+        jComboBoxYear.removeAllItems();
+        jComboBoxMonth.removeAllItems();
+        jComboBoxDay.removeAllItems();
+        jComboBoxHour.removeAllItems();
+        jComboBoxMinute.removeAllItems();
+        
+        LocalDateTime now = LocalDateTime.now();
+        
+        int fraction = now.getMinute();
+        
+        jComboBoxYear.addItem(Integer.toString(now.getYear()));     // 年をコンボボックスに追加
+        jComboBoxYear.addItem(Integer.toString(now.getYear() + 1));
+        jComboBoxYear.setSelectedItem(Integer.toString(now.getYear()));
+        
+        for(int i = 1; i <= 12; i++) {
+            jComboBoxMonth.addItem(Integer.toString(i));            // 月をコンボボックスに追加
+        }
+        jComboBoxMonth.setSelectedItem(Integer.toString(now.getMonthValue()));
+        for(int i = 1; i <= 31; i++) {
+            jComboBoxDay. addItem(Integer.toString(i));              // 日をコンボボックスに追加
+        }
+        jComboBoxDay.setSelectedItem(Integer.toString(now.getDayOfMonth()));
+        
+        
+        
+        
+        
+        
+        int min =  now.getMinute();   
+        min = ((min / 10) + 1) * 10;
+
+        for(int i = 0 ; i < 60 ; i+=10) {
+
+           
+            jComboBoxMinute.addItem(Integer.toString(i)); 
+            
+            
+
+        
+            
+        }
+        jComboBoxMinute.setSelectedItem(Integer.toString((min + 30) % 60));// 日をコンボボックスに追加
+        
+        
+        
+        for(int i = 10 ; i <= 20; i++) {
+            jComboBoxHour.addItem(Integer.toString(i));             // 時をコンボボックスに追加
+        }
+        jComboBoxHour.setSelectedItem(Integer.toString(now.getHour() + (min + 30) / 60));
+        
+    }
+    
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel1 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        jComboBoxYear = new javax.swing.JComboBox<>();
+        jLabel11 = new javax.swing.JLabel();
+        jComboBoxMonth = new javax.swing.JComboBox<>();
+        jLabel12 = new javax.swing.JLabel();
+        jComboBoxDay = new javax.swing.JComboBox<>();
+        jLabel10 = new javax.swing.JLabel();
+        jComboBoxHour = new javax.swing.JComboBox<>();
+        jLabel9 = new javax.swing.JLabel();
+        jComboBoxMinute = new javax.swing.JComboBox<>();
+        jLabel13 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTableOrder = new javax.swing.JTable();
+        jLabel14 = new javax.swing.JLabel();
+        jLabelTotal = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        jLabelDiscountPrice = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
+        jLabelAfterDiscountPrice = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
+        jButtonCancel = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        jComboBoxItem = new javax.swing.JComboBox<>();
+        jLabel7 = new javax.swing.JLabel();
+        jSpinnerNumber = new javax.swing.JSpinner();
+        jButtonServiceAdd = new javax.swing.JButton();
+        jButtonAddItem = new javax.swing.JButton();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabelName = new javax.swing.JLabel();
+        jLabelAddress = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabelServiceCount = new javax.swing.JLabel();
+        jTextFieldTelNo = new javax.swing.JTextField();
+        jButtonSearchCustomer = new javax.swing.JButton();
+        jButtonAddCustomer = new javax.swing.JButton();
+        jLabel16 = new javax.swing.JLabel();
+        jLabelOrderCount = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel15 = new DateTimeLabel("yyyy/MM/dd HH:mm:ss");
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
+
+        jPanel1.setBackground(new java.awt.Color(204, 255, 204));
+
+        jPanel3.setBackground(new java.awt.Color(255, 255, 204));
+
+        jLabel8.setFont(new java.awt.Font("MS UI Gothic", 1, 14)); // NOI18N
+        jLabel8.setText("配達希望日時");
+
+        jComboBoxYear.setFont(new java.awt.Font("MS UI Gothic", 0, 24)); // NOI18N
+
+        jLabel11.setFont(new java.awt.Font("MS UI Gothic", 1, 14)); // NOI18N
+        jLabel11.setText("年");
+
+        jComboBoxMonth.setFont(new java.awt.Font("MS UI Gothic", 0, 24)); // NOI18N
+
+        jLabel12.setFont(new java.awt.Font("MS UI Gothic", 1, 14)); // NOI18N
+        jLabel12.setText("月");
+
+        jComboBoxDay.setFont(new java.awt.Font("MS UI Gothic", 0, 24)); // NOI18N
+
+        jLabel10.setFont(new java.awt.Font("MS UI Gothic", 1, 14)); // NOI18N
+        jLabel10.setText("日");
+
+        jComboBoxHour.setFont(new java.awt.Font("MS UI Gothic", 0, 24)); // NOI18N
+        jComboBoxHour.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBoxHourItemStateChanged(evt);
+            }
+        });
+
+        jLabel9.setFont(new java.awt.Font("MS UI Gothic", 1, 14)); // NOI18N
+        jLabel9.setText("時");
+
+        jComboBoxMinute.setFont(new java.awt.Font("MS UI Gothic", 0, 24)); // NOI18N
+
+        jLabel13.setFont(new java.awt.Font("MS UI Gothic", 1, 14)); // NOI18N
+        jLabel13.setText("分");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                .addGap(24, 24, 24)
+                .addComponent(jComboBoxYear, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jComboBoxMonth, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(38, 38, 38)
+                .addComponent(jComboBoxDay, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(94, 94, 94)
+                .addComponent(jComboBoxHour, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jComboBoxMinute, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
+                .addGap(35, 35, 35))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jComboBoxMonth)
+                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jComboBoxDay)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jComboBoxHour)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jComboBoxMinute)
+                    .addComponent(jComboBoxYear))
+                .addContainerGap())
+        );
+
+        jPanel4.setBackground(new java.awt.Color(0, 204, 153));
+
+        jTableOrder.setFont(new java.awt.Font("MS UI Gothic", 0, 24)); // NOI18N
+        jTableOrder.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5"
+            }
+        ));
+        jTableOrder.setRowHeight(25);
+        jTableOrder.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableOrderMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTableOrder);
+
+        jLabel14.setFont(new java.awt.Font("MS UI Gothic", 1, 14)); // NOI18N
+        jLabel14.setText("合計　");
+
+        jLabelTotal.setFont(new java.awt.Font("MS UI Gothic", 0, 24)); // NOI18N
+        jLabelTotal.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelTotal.setText("￥0");
+        jLabelTotal.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jLabelTotal.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
+        jLabel19.setFont(new java.awt.Font("MS UI Gothic", 1, 14)); // NOI18N
+        jLabel19.setForeground(new java.awt.Color(255, 0, 0));
+        jLabel19.setText("割引額");
+
+        jLabelDiscountPrice.setFont(new java.awt.Font("MS UI Gothic", 0, 24)); // NOI18N
+        jLabelDiscountPrice.setForeground(new java.awt.Color(255, 0, 0));
+        jLabelDiscountPrice.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelDiscountPrice.setText("￥0");
+        jLabelDiscountPrice.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 0, 0)));
+        jLabelDiscountPrice.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
+        jLabel21.setFont(new java.awt.Font("MS UI Gothic", 1, 18)); // NOI18N
+        jLabel21.setText("割引後合計");
+
+        jLabelAfterDiscountPrice.setFont(new java.awt.Font("MS UI Gothic", 0, 24)); // NOI18N
+        jLabelAfterDiscountPrice.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelAfterDiscountPrice.setText("￥0");
+        jLabelAfterDiscountPrice.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jLabelAfterDiscountPrice.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
+        jLabel23.setFont(new java.awt.Font("MS UI Gothic", 0, 24)); // NOI18N
+        jLabel23.setText("注文明細");
+
+        jButtonCancel.setText("注文全取消");
+        jButtonCancel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButtonCancelMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel23)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                                .addComponent(jButtonCancel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 87, Short.MAX_VALUE)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel14))
+                                .addGap(12, 12, 12)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabelDiscountPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabelTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(24, 24, 24)
+                                .addComponent(jLabel21)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabelAfterDiscountPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(27, 27, 27)))
+                        .addContainerGap())))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(8, 8, 8)
+                .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel14)
+                    .addComponent(jLabelTotal))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonCancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabelDiscountPrice, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabelAfterDiscountPrice, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(37, 37, 37))
+        );
+
+        jPanel5.setBackground(new java.awt.Color(255, 255, 204));
+
+        jLabel4.setFont(new java.awt.Font("MS UI Gothic", 1, 14)); // NOI18N
+        jLabel4.setText("商品番号 : 商品名");
+
+        jComboBoxItem.setFont(new java.awt.Font("MS UI Gothic", 1, 14)); // NOI18N
+
+        jLabel7.setFont(new java.awt.Font("MS UI Gothic", 1, 14)); // NOI18N
+        jLabel7.setText("個数");
+
+        jSpinnerNumber.setFont(new java.awt.Font("MS UI Gothic", 0, 18)); // NOI18N
+        jSpinnerNumber.setModel(new javax.swing.SpinnerNumberModel(1, 1, 100, 1));
+
+        jButtonServiceAdd.setBackground(new java.awt.Color(204, 255, 204));
+        jButtonServiceAdd.setFont(new java.awt.Font("MS UI Gothic", 1, 10)); // NOI18N
+        jButtonServiceAdd.setText("サービス生春巻利用");
+        jButtonServiceAdd.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButtonServiceAddMouseClicked(evt);
+            }
+        });
+        jButtonServiceAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonServiceAddActionPerformed(evt);
+            }
+        });
+
+        jButtonAddItem.setFont(new java.awt.Font("MS UI Gothic", 1, 36)); // NOI18N
+        jButtonAddItem.setText("追加");
+        jButtonAddItem.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButtonAddItemMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jComboBoxItem, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(8, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addGap(18, 18, 18)
+                        .addComponent(jSpinnerNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButtonAddItem, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                        .addComponent(jButtonServiceAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(113, 113, 113))))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jComboBoxItem, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addGap(40, 40, 40)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonAddItem)
+                    .addComponent(jSpinnerNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
+                .addComponent(jButtonServiceAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31))
+        );
+
+        jPanel6.setBackground(new java.awt.Color(204, 255, 204));
+        jPanel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel1.setFont(new java.awt.Font("MS UI Gothic", 1, 14)); // NOI18N
+        jLabel1.setText("電話番号");
+
+        jLabel2.setFont(new java.awt.Font("MS UI Gothic", 1, 14)); // NOI18N
+        jLabel2.setText("お名前　(カナ)");
+
+        jLabel3.setFont(new java.awt.Font("MS UI Gothic", 1, 14)); // NOI18N
+        jLabel3.setText("住所");
+
+        jLabelName.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabelAddress.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel6.setFont(new java.awt.Font("MS UI Gothic", 1, 14)); // NOI18N
+        jLabel6.setText("サービス利用可能回数");
+
+        jLabelServiceCount.setFont(new java.awt.Font("MS UI Gothic", 1, 12)); // NOI18N
+        jLabelServiceCount.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jTextFieldTelNo.setMinimumSize(new java.awt.Dimension(11, 29));
+
+        jButtonSearchCustomer.setBackground(new java.awt.Color(204, 204, 204));
+        jButtonSearchCustomer.setFont(new java.awt.Font("MS UI Gothic", 1, 14)); // NOI18N
+        jButtonSearchCustomer.setText("顧客検索");
+        jButtonSearchCustomer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSearchCustomerActionPerformed(evt);
+            }
+        });
+
+        jButtonAddCustomer.setBackground(new java.awt.Color(255, 255, 204));
+        jButtonAddCustomer.setFont(new java.awt.Font("MS UI Gothic", 1, 14)); // NOI18N
+        jButtonAddCustomer.setText("新規登録");
+        jButtonAddCustomer.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButtonAddCustomerMouseClicked(evt);
+            }
+        });
+
+        jLabel16.setFont(new java.awt.Font("MS UI Gothic", 1, 14)); // NOI18N
+        jLabel16.setText("注文回数");
+
+        jLabelOrderCount.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel16)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addGap(110, 110, 110)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabelAddress, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(179, 179, 179))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addComponent(jLabelOrderCount, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(77, 77, 77)
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabelServiceCount, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabelName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jTextFieldTelNo, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE))
+                                .addGap(79, 79, 79)
+                                .addComponent(jButtonSearchCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(88, 88, 88)
+                                .addComponent(jButtonAddCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jTextFieldTelNo, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jLabelName, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(7, 7, 7)))
+                        .addGap(11, 11, 11))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonSearchCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonAddCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel16)
+                        .addContainerGap())
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel6)
+                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addComponent(jLabelAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel6Layout.createSequentialGroup()
+                                        .addGap(17, 17, 17)
+                                        .addComponent(jLabelOrderCount, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabelServiceCount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                        .addGap(11, 11, 11))))
+        );
+
+        jPanel6Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jLabelAddress, jLabelName, jLabelServiceCount});
+
+        jButton1.setFont(new java.awt.Font("MS UI Gothic", 1, 40)); // NOI18N
+        jButton1.setText("注文確定");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(12, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 15, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(53, 53, 53)))))
+                .addContainerGap(20, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(12, Short.MAX_VALUE)
+                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(17, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(27, 27, 27))))
+        );
+
+        jPanel2.setBackground(new java.awt.Color(0, 204, 153));
+
+        jLabel5.setFont(new java.awt.Font("MS UI Gothic", 1, 48)); // NOI18N
+        jLabel5.setText("注文受付");
+
+        jLabel15.setFont(new java.awt.Font("MS UI Gothic", 0, 24)); // NOI18N
+        jLabel15.setText("yyyy/mm/dd   hh:mm:ss");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(473, 473, 473)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel15)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel5))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(45, 45, 45)
+                        .addComponent(jLabel15)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, 0))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jComboBoxHourItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxHourItemStateChanged
+        if(jComboBoxHour.getItemCount() != 0) {
+        control.switchDiscount(Integer.parseInt(jComboBoxHour.getSelectedItem().toString()));
+        setPrice();
+        }
+    }//GEN-LAST:event_jComboBoxHourItemStateChanged
+    
+    private void jButtonCancelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonCancelMouseClicked
+        if(JOptionPane.showConfirmDialog(rootPane, "現在入力している情報を\n削除してもよろしいですか", "確認画面", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {   
+            for (int i = orderViewTableModel.getRowCount() - 1 ; i >= 0; i--)  {    // 情報のリセット
+                orderViewTableModel.removeRow(i);
+            }
+            jTextFieldTelNo.setText("");
+            jLabelName.setText("");
+            jLabelAddress.setText("");
+            jLabelServiceCount.setText("");
+            jLabelTotal.setText("¥0");
+            jLabelDiscountPrice.setText("¥0");
+            jLabelAfterDiscountPrice.setText("¥0");
+            rowSelect = 0;
+        }
+    }//GEN-LAST:event_jButtonCancelMouseClicked
+
+    private void jButtonAddItemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonAddItemMouseClicked
+        if(jTableOrder.getRowCount() <= 100) {
+            Item item = control.showSearchItemNo(jComboBoxItem.getSelectedIndex() + 1);
+            int sum = item.getPrice() * Integer.parseInt(jSpinnerNumber.getValue().toString());
+            
+            JButton button = new JButton("取消");
+            
+            button.addActionListener(
+            new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if(jTableOrder.getSelectedRow() >= 0) {
+                        if (JOptionPane.showConfirmDialog(rootPane, "商品を取り消しますか?", "確認画面",
+                                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                            orderViewTableModel.removeRow(jTableOrder.getSelectedRow());
+                        }
+                        else {
+                            jTableOrder.removeRowSelectionInterval(0, jTableOrder.getRowCount() - 1);
+                        }
+                    }
+                    setPrice();      
+                }
+            });
+            Object[] rowData = {item.getItemNo(), item.getItemName(),item.getPrice(), jSpinnerNumber.getValue(), sum, button};
+            addOrderViewTable(rowData);
+            setPrice();
+            rowSelect++;
+        }
+        else {
+            JOptionPane.showMessageDialog(rootPane, "商品の量が多すぎます\n会計を押して次の注文で入力してください", "入力エラー", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_jButtonAddItemMouseClicked
+
+    private void jTableOrderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableOrderMouseClicked
+        if(rowSelect != control.rowCount()) {
+            setPrice();
+            rowSelect = control.rowCount();
+            adjustCount();
+        }
+    }//GEN-LAST:event_jTableOrderMouseClicked
+
+    private void jButtonServiceAddMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonServiceAddMouseClicked
+        JButton button = new JButton("取消");
+            
+        button.addActionListener(
+        new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(jTableOrder.getSelectedRow() >= 0) {
+                    if (JOptionPane.showConfirmDialog(rootPane, "商品を取り消しますか?", "確認画面",
+                            JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                        orderViewTableModel.removeRow(jTableOrder.getSelectedRow());
+                        jLabelServiceCount.setText(Integer.toString(Integer.parseInt(jLabelServiceCount.getText()) + 1));
+                        jButtonServiceAdd.setVisible(true);
+                    }
+                    else {
+                        jTableOrder.removeRowSelectionInterval(0, jTableOrder.getRowCount() - 1);
+                    }
+                }
+                setPrice();      
+            }
+        });
+        Object[] rowData = {"###", "サービス品", 0, 1, 0, button};
+        addOrderViewTable(rowData);
+        adjustCount();
+    }//GEN-LAST:event_jButtonServiceAddMouseClicked
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        if(JOptionPane.showConfirmDialog(rootPane, "システムを終了しますか", "確認画面", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        } 
+    }//GEN-LAST:event_formWindowClosing
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        LocalDateTime del;
+        if(!jLabelName.getText().equals("") && !jLabelAfterDiscountPrice.getText().equals("\\0")) {
+            if(Integer.parseInt(jLabelServiceCount.getText()) >= 0) {
+                del = LocalDateTime.of(Integer.parseInt(jComboBoxYear.getSelectedItem().toString()),      // 配達日時を入力する
+                                       Integer.parseInt(jComboBoxMonth.getSelectedItem().toString()),
+                                       Integer.parseInt(jComboBoxDay.getSelectedItem().toString()),
+                                       Integer.parseInt(jComboBoxHour.getSelectedItem().toString()), 
+                                       Integer.parseInt(jComboBoxMinute.getSelectedItem().toString()), 0);
+                if(del.isAfter(LocalDateTime.now())) {
+                    if(JOptionPane.showConfirmDialog(rootPane, "注文を確定しますか", "確認画面", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+                        control.insertOrderDetail(jTextFieldTelNo.getText(), Integer.parseInt(jLabelAfterDiscountPrice.getText().substring(1)), Integer.parseInt(jLabelDiscountPrice.getText().substring(1)));
+                        control.addOrderCount(jTextFieldTelNo.getText(), Integer.parseInt(jLabelServiceCount.getText()));
+                        JOptionPane.showMessageDialog(rootPane, "注文が完了しました", "確認画面", JOptionPane.PLAIN_MESSAGE);
+                        
+                        
+                            for (int i = orderViewTableModel.getRowCount() - 1 ; i >= 0; i--)  {    // 情報のリセット
+                                orderViewTableModel.removeRow(i);
+                            }
+                            jTextFieldTelNo.setText("");
+                            jLabelName.setText("");
+                            jLabelAddress.setText("");
+                            jLabelServiceCount.setText("");
+                            jLabelOrderCount.setText("");
+                            
+            
+                   
+                            
+                            
+                            jLabelTotal.setText("¥0");
+                            jLabelDiscountPrice.setText("¥0");
+                            jLabelAfterDiscountPrice.setText("0");
+                            rowSelect = 0;
+                            
+                            LocalDateTime now = LocalDateTime.now();
+                            int min =  now.getMinute();   
+                            min = ((min / 10) + 1) * 10;
+
+                            for(int i = 0 ; i < 60 ; i+=10) {
+                                jComboBoxMinute.addItem(Integer.toString(i)); 
+                                }
+                            jComboBoxMinute.setSelectedItem(Integer.toString((min + 30) % 60));// 日をコンボボックスに追加
+
+
+
+                            for(int i = 10 ; i <= 20; i++) {
+                                jComboBoxHour.addItem(Integer.toString(i));             // 時をコンボボックスに追加
+                            }
+                            jComboBoxHour.setSelectedItem(Integer.toString(now.getHour() + (min + 30) / 60));
+
+                    }
+                    
+                }
+                else {
+                    JOptionPane.showMessageDialog(rootPane, "時間の設定が不正です", "入力エラー", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            else {
+                JOptionPane.showMessageDialog(rootPane, "サービス券をポイントより\n多く使用しています", "入力エラー", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        else {
+            JOptionPane.showMessageDialog(rootPane, "未入力項目があります", "入力エラー", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButtonSearchCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchCustomerActionPerformed
+        if(!jTextFieldTelNo.getText().equals("")) {
+            if(jTextFieldTelNo.getText().matches("[0-9]{10,12}")) {
+                Customer customer = control.searchCustomer(jTextFieldTelNo.getText()); //顧客を検索する
+                if(customer != null) {
+                    jLabelName.setText(customer.getName());     //検索した結果を画面に表示する
+                    jLabelAddress.setText(customer.getAddress());
+                    jLabelServiceCount.setText(Integer.toString(customer.getServiceCount()));
+                    jLabelOrderCount.setText(Integer.toString(customer.getOrderCount()));
+                    fixationCount = customer.getServiceCount();
+                    adjustCount();
+                }
+                else {
+                    if(JOptionPane.showConfirmDialog(rootPane, "登録情報がありません\n新規登録しますか？", "確認画面", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
+                        this.setVisible(false);
+                        control.showBoundaryCustomer(jTextFieldTelNo.getText());
+                     }
+                }
+            }
+            else {
+                JOptionPane.showMessageDialog(rootPane, "書式または桁数が違います", "エラー", JOptionPane.ERROR_MESSAGE);
+            }   
+        }
+        else {
+            JOptionPane.showMessageDialog(rootPane, "電話番号が未入力です", "エラー", JOptionPane.ERROR_MESSAGE);
+        }      
+    }//GEN-LAST:event_jButtonSearchCustomerActionPerformed
+
+    private void jButtonAddCustomerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonAddCustomerMouseClicked
+        if(!jTextFieldTelNo.getText().equals("")) {
+                if(jTextFieldTelNo.getText().matches("[0-9]{10,12}")) {
+                    this.setVisible(false);
+                    control.showBoundaryCustomer(jTextFieldTelNo.getText());
+                }
+                else {
+                    JOptionPane.showMessageDialog(rootPane, "書式または桁数が違います", "エラー", JOptionPane.ERROR_MESSAGE);
+                }
+        }
+        else {
+            //JOptionPane.showMessageDialog(rootPane, "電話番号を入力してください", "入力", JOptionPane.WARNING_MESSAGE);
+            control.showBoundaryCustomer();
+            
+        }   
+        
+        
+        
+        
+    }//GEN-LAST:event_jButtonAddCustomerMouseClicked
+
+    private void jButtonServiceAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonServiceAddActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonServiceAddActionPerformed
+    
+    /**
+     * 表を計算して合計金額、割引額、割引後の合計金額を表示する
+     */
+    void setPrice() {
+        String[] calc = control.calcPrice();
+        jLabelTotal.setText("¥" + calc[0]);                // 合計金額
+        jLabelDiscountPrice.setText("¥" + calc[1]);        // 割引額
+        jLabelAfterDiscountPrice.setText("¥" + calc[2]);   // 割引後の合計金額
+    }
+    /**
+     * 使用しているクーポンの回数をカウントして顧客が使用できる回数を計算して表示する
+     */
+    void adjustCount() {
+        int nowCount = 0;                           // 現在表で使われているサービスの回数
+        for (int i = 0; i < orderViewTableModel.getRowCount(); i++) {
+            
+                if((int)orderViewTableModel.getValueAt(i, 4) == 0) {
+                    nowCount++;
+                }
+            
+        }
+        jLabelServiceCount.setText(Integer.toString(fixationCount - nowCount)); //サービス利用可能回数にセット
+        if((fixationCount - nowCount) > 0) {
+            jButtonServiceAdd.setVisible(true);
+        }
+        else {
+            jButtonServiceAdd.setVisible(false);
+        }
+    }
+    
+    /**
+     * 顧客情報の表示(未登録顧客)
+     * @param telNo         電話番号
+     * @param name          名前
+     * @param address       住所
+     */
+    void setParameter(String telNo, String name, String address) {
+        jTextFieldTelNo.setText(telNo);
+        jLabelName.setText(name);
+        jLabelAddress.setText(address);
+        jLabelServiceCount.setText("0");
+        jLabelOrderCount.setText("0");
+        fixationCount = 0;
+        adjustCount();
+    }
+    
+    
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(BoundaryOrder.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(BoundaryOrder.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(BoundaryOrder.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(BoundaryOrder.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                BoundaryOrder boundaryOrder = new BoundaryOrder();
+               
+                boundaryOrder.setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButtonAddCustomer;
+    private javax.swing.JButton jButtonAddItem;
+    private javax.swing.JButton jButtonCancel;
+    private javax.swing.JButton jButtonSearchCustomer;
+    private javax.swing.JButton jButtonServiceAdd;
+    private javax.swing.JComboBox<String> jComboBoxDay;
+    private javax.swing.JComboBox<String> jComboBoxHour;
+    private javax.swing.JComboBox<String> jComboBoxItem;
+    private javax.swing.JComboBox<String> jComboBoxMinute;
+    private javax.swing.JComboBox<String> jComboBoxMonth;
+    private javax.swing.JComboBox<String> jComboBoxYear;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel19;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabelAddress;
+    private javax.swing.JLabel jLabelAfterDiscountPrice;
+    private javax.swing.JLabel jLabelDiscountPrice;
+    private javax.swing.JLabel jLabelName;
+    private javax.swing.JLabel jLabelOrderCount;
+    private javax.swing.JLabel jLabelServiceCount;
+    private javax.swing.JLabel jLabelTotal;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSpinner jSpinnerNumber;
+    private javax.swing.JTable jTableOrder;
+    private javax.swing.JTextField jTextFieldTelNo;
+    // End of variables declaration//GEN-END:variables
+
+}
+
+/**
+ * MyTableModelの定義(booleanの実装)
+ */
+class MyTableModel extends DefaultTableModel {
+    public MyTableModel(String[] columnNames, int rowNum) {
+        super(columnNames, rowNum);
+    }
+    public MyTableModel(Object[][] data, String[] names) {
+        super(data, names);
+    }
+    @Override
+    public Class getColumnClass(int col) {
+        return getValueAt(0, col).getClass();
+    }
+    
+}
+
+class JTableButtonMouseListener extends MouseAdapter {
+  private final JTable table;
+
+  public JTableButtonMouseListener(JTable table) {
+    this.table = table;
+  }
+
+  @Override public void mouseClicked(MouseEvent e) {
+    int column = table.getColumnModel().getColumnIndexAtX(e.getX());
+    int row    = e.getY()/table.getRowHeight(); 
+
+    if (row < table.getRowCount() && row >= 0 && column < table.getColumnCount() && column >= 0) {
+      Object value = table.getValueAt(row, column);
+      if (value instanceof JButton) {
+        ((JButton)value).doClick();
+      }
+    }
+  }
+}
+
+class JTableButtonRenderer implements TableCellRenderer {        
+  @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    JButton button = (JButton)value;
+    if (isSelected) {
+      button.setForeground(table.getSelectionForeground());
+      button.setBackground(table.getSelectionBackground());
+    } else {
+      button.setForeground(table.getForeground());
+      button.setBackground(UIManager.getColor("Button.background"));
+    }
+    return button;  
+  }
+}

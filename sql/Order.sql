@@ -1,0 +1,11 @@
+
+DROP TABLE ORDERS;     
+
+
+CREATE TABLE ORDERS (
+ ORDERNO INTEGER generated always as identity(start with 1, increment by 1),
+ TELNO          VARCHAR(10) NOT NULL,
+ TOTAL      INTEGER,
+ DISCOUNTPRICE INTEGER,
+CONSTRAINT PK_ORDERS PRIMARY KEY (ORDERNO)
+);
